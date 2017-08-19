@@ -43,7 +43,7 @@ with open(file_name, "rb") as f:
     report     = pickle.load(f)
     
 # Convert results to pandas data frame
-results = pd.DataFrame(classifer.cv_results_)
+results = pd.DataFrame(classifier.cv_results_)
 
  
 
