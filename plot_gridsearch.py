@@ -6,10 +6,14 @@ Created 2017-08-10
 @author: Akhil Garg, akhil.garg@mail.mcgill.ca
 
 Takes results of ml_v4_gridsearch.py and plots parameters (x-axis) vs. 
-area under receiver operating characteristic curve (AUROC).
+area under receiver operating characteristic curve (AUROC) 
+that is obtained by cross-validation.
 
-Input:  pickled results in 'gridsearch_results.pickle'.
-Output: plots of parameters vs. AUROC.
+Input:  pickled results containing the classifier, and classification report
+    The classifier is an sklearn.model_selection.GridSearchCV object.
+    The classification report is an sklearn.metrics.classification_report object.
+    
+Output: plots of parameters vs. cross-validated AUROC.
 
 """
 
@@ -27,6 +31,7 @@ import sys
 
 ''' Load data '''
 
+
 try:
     file_name = sys.argv[1]
 except IndexError:
@@ -34,30 +39,31 @@ except IndexError:
     file_name = "gridsearch_results.pickle"
     
 with open(file_name, "rb") as f:
-    #results = pickle.load(f).classifier.cv_results_
-    results = pickle.load(f)
+    classifier = pickle.load(f)
+    report     = pickle.load(f)
     
-# Convert results to pandas data frame    
-results = pd.DataFrame(results)
+# Convert results to pandas data frame
+results = pd.DataFrame(classifer.cv_results_)
+
  
 
    
-''' Plot of all results '''
+''' Plot of all AUROCs using cross-validation '''
 
 
 # Set threshold of results to view: [threshold, 1]
 threshold = 0.5
 
-# Count number of good results (over 0.9)
+# Count number of good results (over threshold)
 # Condition returns series of boolean values, where True == 1
 # Summing number of Trues gives count
 over_threshold = sum(results.mean_test_score > threshold) 
 N_obs  = results.shape[0]
 
 
-# All AUROCs
+# All cross-validation AUROCs
 plt.figure(1)
-plt.title("Histogram of all AUROC scores over " +
+plt.title("Histogram of cross-validated AUROC scores over " +
           "{} ({}/{} parameter combinations)".format(threshold, over_threshold, N_obs))
 plt.xlabel("AUROC")
 plt.ylabel("Count") 
@@ -65,13 +71,13 @@ plt.hist(results["mean_test_score"], range = (threshold, 1), bins = 50)
 
 
 
-''' Plots of test score vs. each individual parameter '''
+''' Plots of cross-validated AUROC vs. each individual parameter '''
 
 
 # Share y-axis among subplots
 # Create 4 subplots
 fig, ((ax0, ax1), (ax2, ax3)) = plt.subplots(nrows = 2, ncols = 2, sharey = "row")
-fig.suptitle("Mean AUROC vs. various parameters (N = {})".format(N_obs)) # title for all four subplots
+fig.suptitle("Mean cross-validated AUROC vs. various parameters (N = {})".format(N_obs)) # title for all four subplots
 fig.subplots_adjust(hspace = 0.5, top = 0.85) # increase space between titles
 
 
