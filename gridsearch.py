@@ -70,7 +70,6 @@ if __name__ == "__main__":
     #features = data_frame[["age"]] # We only have age, need others
 
     
-
     # All features
     # features = data_frame.drop(["shock", "stroke", "mechanicalventilation", "chf", 
                                 # "cardiogenicshock", "ventriculararrythmia", "atrialfibrillation", 
@@ -86,18 +85,22 @@ if __name__ == "__main__":
     
     # 8 features selected based on linear SVM weights
     # Removed variables that could potentially affect the outcome
-    #features = data_frame[['inhospenox', 'platelets', 'age', 'clearanceofcreatinine', 'priorcvatia',
-    #                       'INHOSPCABG', 'angioplasty', 'lvef']]
+    # features = data_frame[['inhospenox', 'platelets', 'age', 'clearanceofcreatinine', 'priorcvatia',
+                          # 'INHOSPCABG', 'angioplasty', 'lvef']]
 
                            
-    # Mixture of features based on F-score, SVM, and L2 regularization
+    # 10 features selected based on F-score, SVM, and L2 regularization
     features = data_frame[['peakcreat', 'age', 'angioplasty', 'lvef', 'weight', 
                            'inhospenox', 'STEMI', 'NSTEMI', 'unstable_angina', 
                            'INHOSPCABG']]
                            
     
-    print("Selected features: {}\n".format(list(features)))
+    # 4 features
+    #features = data_frame[['peakcreat', 'age', 'angioplasty', 'weight']]
     
+    
+    
+    print("Selected features: {}\n".format(list(features)))
     
     # Response variable (pick one)
     response = data_frame["death"]
@@ -202,13 +205,17 @@ if __name__ == "__main__":
     
         
     # Print quick report containing precision, recall, F1 score
-    print(metrics.classification_report(y_true, y_pred))                                     
+    report = metrics.classification_report(y_true, y_pred)
+    print(report)                                     
 
     
 
     # Store the pickled results in file
     with open(file_out,"wb") as f:
         pickle.dump(classifier, f)
+        pickle.dump(report, f)
+        pickle.dump((X_train, X_test, y_train, y_test), f)
+        pickle.dump(feature_names, f)
        
 
     
@@ -220,5 +227,5 @@ if __name__ == "__main__":
     m, s = divmod(elapsed_time, 60)
     h, m = divmod(m, 60)
     
-    print("\nElapsed time (h:m:s):\n--- {:.0f}:{:02.0f}:{:02.0f}---".format(h, m, s))
+    print("\nElapsed time (h:m:s):\n--- {:.0f}:{:02.0f}:{:02.0f} ---".format(h, m, s))
 
