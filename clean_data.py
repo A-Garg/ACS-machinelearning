@@ -5,6 +5,7 @@ Created on 2017-07-26
 
 @author: Akhil Garg, akhil.garg@mail.mcgill.ca
 
+Clean_data.py takes a CSV of data from an ACS-1 database. 
 Cleans the data and stores it in a Pandas dataframe.
 
 """
@@ -12,12 +13,10 @@ Cleans the data and stores it in a Pandas dataframe.
 
 ''' Imports '''
 
-
-import pandas as pd # Handle data
-import numpy  as np # Matrix manipulation
-import sys # Get arguments from command line
-import pickle # Store cleaned data frame
-import csv
+import pandas as pd # data manipulation, version 0.20.2
+import numpy  as np # matrix and math tools, version 1.13.1
+import sys # get arguments from command line
+import pickle # store cleaned data frame
 
 
 ''' Column names '''
@@ -74,6 +73,7 @@ column_types = {"femal": "category", "ethnicity": "category",
                 "bradyarrythmia":"category", "arrrythmia":"category", "cardiacarrest":"category", "timibleed":"category", 
                 "gibleed":"category", "infection":"category", "death":"category"}
 
+                
 # If there are incorrectly coded floats as strings, replace them with NaN
 def float_error(x):
     try: return float(x)
@@ -97,9 +97,6 @@ except IndexError:
     sys.exit("Please enter a file name to clean.\nFormat: python clean_data.py file_name_here")
     
 print("Reading " + file_name)
-
-
-
 
 
 # Convert file to data frame
@@ -328,7 +325,7 @@ data_frame.drop(4202, inplace = True)
 
                               
 
-''' Verify the final data frame  before writing to file '''
+''' Verify the final data frame before writing to file '''
 
 
 print("Done.")
