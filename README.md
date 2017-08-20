@@ -2,6 +2,8 @@
 Create a machine learning model that is simpler and outperforms the GRACE score for acute coronary care.
 
 ## Files
+For each file, additional documentation is available within the file itself.
+
 ### clean_data.py
 
 This file takes a CSV of data from an ACS-1 database. It cleans the data and stores it in a Pandas dataframe, which is written to a pickled file. Cleaning includes:
@@ -55,17 +57,29 @@ Each method is described in further detail where it is defined in the script, or
 
 After selecting the desired methods, run `python feature_selection.py` at the command line.
 
-Note that for `plot_correlation_SVM()` to work, the correlation and SVM functions need to be uncommented.
-
 Each function in this script can also be imported into other python scripts.
 
 ### gridsearch.py
+Takes data that is outputted by `clean_data.py`, and finds the best parameters for classification.
+The classification parameters apply to a support vector machine:
+Each parameter combination is tested using 10-fold stratified cross-validation.
 
+* C
+* gamma
+* kernel
+* class weight
+
+#### Usage
+Select features to use by setting the variable `features` equal to a list of features from `data_frame`. For example: `features = data_frame[["age", "weight", "female"]]`
+
+At command line, type `python gridsearch.py` followed by the name of an output file.
 
 ### plot_gridsearch.py
 
 
 ### ROC_classification_report.py
+
+
 
 ## Module Versions
 
