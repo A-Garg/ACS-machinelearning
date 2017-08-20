@@ -63,22 +63,40 @@ Each function in this script can also be imported into other python scripts.
 Takes data that is outputted by `clean_data.py`, and finds the best parameters for classification.
 The classification parameters apply to a support vector machine:
 Each parameter combination is tested using 10-fold stratified cross-validation.
+Outputs a results file containing serialized objects.
 
+The parameters tested are:
 * C
 * gamma
 * kernel
 * class weight
 
+The serialized objects (pickled) are, in order:
+1. classifier (sklearn.model_selection.GridSearchCV object)
+2. classification report (string from sklearn.metrics.classification_report)
+3. train and test data (tuple of X_train, X_test, y_train, y_test)
+4. feature names (list)
+
 #### Usage
 Select features to use by setting the variable `features` equal to a list of features from `data_frame`. For example: `features = data_frame[["age", "weight", "female"]]`
 
-At command line, type `python gridsearch.py` followed by the name of an output file.
+At command line, type `python gridsearch.py [name of output file]`
 
 ### plot_gridsearch.py
+Plot a histogram of areas under receiver operating characteristic (AUROC) curve, as well as mean AUROC vs. each parameter.
 
+At command line, enter `python plot_gridsearch.py`
 
 ### ROC_classification_report.py
 
+Tests the best classifier of each gridsearch on its unseen test sets.
+Produces an ROC classifying the best classifier based on which features are used.
+Also outputs a classification report, containing precision and recall statistics.
+
+#### Usage
+One must first modify `file_list` and `label_list`. `file_list` should contain a list of files to use. These should all be outputs of `gridsearch.py`. `label_list` should contain human-readable labels describing what results are in each file, for example "Age only".
+
+Once `file_list` and `label_list` are completed, run this program at command line by entering `python ROC_classification_report.py`
 
 
 ## Module Versions
