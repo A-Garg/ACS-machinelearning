@@ -68,7 +68,6 @@ if __name__ == "__main__":
     ### Original parameters: age >= 75, Killip > 1, systolic BP < 100, HR > 100 bpm
     ### See more: https://www.ncbi.nlm.nih.gov/pubmed/23816022
     #features = data_frame[["age"]] # We only have age, need others
-
     
     # All features
     # features = data_frame.drop(["shock", "stroke", "mechanicalventilation", "chf", 
@@ -78,25 +77,21 @@ if __name__ == "__main__":
                                 # axis = 1)
                    
 
-    # 10 best features selected based on F-score
-    # Removed "clearanceofcreatinine", "RADIAL", and "angioplasty" leaving behind only 7
-    #features = data_frame[['bb', 'dapt', 'stat', 'peakcreat', 'age', 'cath', 'nadirhemoglobin']]
-    
-    
     # 8 features selected based on linear SVM weights
     # Removed variables that could potentially affect the outcome
-    # features = data_frame[['inhospenox', 'platelets', 'age', 'clearanceofcreatinine', 'priorcvatia',
-                          # 'INHOSPCABG', 'angioplasty', 'lvef']]
+    # features = data_frame[['inhospenox', 'platelets', 'age', 
+                           # 'peakcreat', 'priorcvatia',
+                           # 'INHOSPCABG', 'angioplasty', 'lvef']]
 
                            
     # 10 features selected based on F-score, SVM, and L2 regularization
-    features = data_frame[['peakcreat', 'age', 'angioplasty', 'lvef', 'weight', 
-                           'inhospenox', 'STEMI', 'NSTEMI', 'unstable_angina', 
-                           'INHOSPCABG']]
+    # features = data_frame[['peakcreat', 'age', 'angioplasty', 'lvef', 'weight', 
+                           # 'inhospenox', 'STEMI', 'NSTEMI', 'unstable_angina', 
+                           # 'INHOSPCABG']]
                            
     
-    # 4 features
-    #features = data_frame[['peakcreat', 'age', 'angioplasty', 'weight']]
+    # 3 features
+    features = data_frame[['peakcreat', 'age', 'angioplasty']]
     
     
     
@@ -118,10 +113,10 @@ if __name__ == "__main__":
 
 
     # Grid of parameters to test
-    # Not testing polynomial kernel
     parameters = [{'C':            np.logspace(-5,5,21),  
                    'gamma':        np.logspace(-8,-1,22),
-                   'kernel':       ['rbf', 'linear', 'sigmoid'],
+                   'kernel':       ['rbf', 'linear', 'sigmoid', 'poly'],
+                   'degree':       np.array((2,3,4)),
                    'class_weight': ['balanced', None]
                  }]
        
@@ -182,7 +177,7 @@ if __name__ == "__main__":
                                               scoring    = "roc_auc" , # want to maximize AUROC
                                               cv         = model_selection.StratifiedKFold(folds), # folds in stratified k-fold cross-validation
                                               verbose    = 1, # how much to output
-                                              n_jobs     = 1 # do jobs in parallel
+                                              n_jobs     = 3 # do jobs in parallel
                                              )
 
     # Test the model on training data
