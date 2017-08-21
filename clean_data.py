@@ -320,7 +320,7 @@ data_frame = data_frame.drop(["ACS_type", "coronaries_affected",
                               "typetrop", "peaktrop", "stemi"], axis = 1)                            
                               
 
-                              
+
 ''' Verify the final data frame before writing to file '''
 
 
