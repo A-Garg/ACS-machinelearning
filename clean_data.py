@@ -320,10 +320,6 @@ data_frame = data_frame.drop(["ACS_type", "coronaries_affected",
                               "typetrop", "peaktrop", "stemi"], axis = 1)                            
                               
 
-# Drop row 4202 of this particular dataset, which contains a lot of nonsense
-data_frame.drop(4202, inplace = True) 
-
-                              
 
 ''' Verify the final data frame before writing to file '''
 

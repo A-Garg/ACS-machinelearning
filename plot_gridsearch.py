@@ -14,7 +14,6 @@ Input:  pickled results containing the classifier, and classification report
     The classification report is an sklearn.metrics.classification_report object.
     
 Output: plots of parameters vs. cross-validated AUROC.
-
 """
 
 
@@ -45,7 +44,6 @@ with open(file_name, "rb") as f:
 # Convert results to pandas data frame
 results = pd.DataFrame(classifier.cv_results_)
 
- 
 
    
 ''' Plot of all AUROCs using cross-validation '''
