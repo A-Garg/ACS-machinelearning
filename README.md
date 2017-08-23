@@ -9,7 +9,7 @@ For each file, additional documentation is available within the file itself.
 
 ### clean_data.py
 
-This file takes a CSV of data from an ACS-1 database. It cleans the data and stores it in a Pandas dataframe, which is written to a pickled file. Cleaning includes:
+This file takes a CSV of data from the ACS-1 database. It cleans the data and stores it in a Pandas dataframe, which is written to a pickled file. Cleaning includes:
 * Renaming some columns
 * Changing string encodings to numbers (e.g. YES/NO to 1/0)
 * Removing some obviously mis-entered numbers
@@ -100,6 +100,28 @@ Also outputs a classification report, containing precision and recall statistics
 One must first modify `file_list` and `label_list`. `file_list` should contain a list of files to use. These should all be outputs of `gridsearch.py`. `label_list` should contain human-readable labels describing what results are in each file, for example "Age only".
 
 Once `file_list` and `label_list` are completed, run this program at command line by entering `python ROC_classification_report.py`
+
+### GRACE_calculator.py
+This script calculates the GRACE score for items in the cleaned ACS-1 database. The GRACE score is calculated from various characteristics as detailed in [Figure 4](http://jamanetwork.com/data/Journals/INTEMED/5461/ioi21057f4.png) of the article [*Predictors of Hospital Mortality in the Global Registry of Acute Coronary Events*](http://jamanetwork.com/journals/jamainternalmedicine/fullarticle/216232).
+
+Once the script calculates the GRACE score, it calculates and produces its receiver operating characteristic (ROC). It then plots this ROC against those of machine learning classifiers as a comparison.
+
+Because the ACS-1 database does not contain all of the variables that contribute to the GRACE score, some simplifying assumptions are made.
+
+Four variables are ignored:
+* History of congestive heart failure
+* History of myocardial infarction
+* Resting heart rate
+* Systolic blood pressure
+
+The cutoffs for an abnormal troponin level are set at:
+* 0.01 ng/mL for troponin-T
+* 0.02 ng/mL for troponin-I
+
+#### Usage
+Ensure that the `.pickle` file from `clean_data.py` is available. In the section of the program labelled `Load data`, type the name of this file. For the comparisons with the machine learning classifiers, the results from `gridsearch.py` must also be present, and it will be necessary to update the list `file_list` accordingly. 
+
+Once done, run this file at command line using `python GRACE_calculator.py`. 
 
 
 ## Module Versions
