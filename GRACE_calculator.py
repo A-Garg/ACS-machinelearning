@@ -98,10 +98,10 @@ data["PCI_score"] = np.where(PCI_isnan, np.nan, data["PCI_score"])
 
 
 data["GRACE_score"] = data["age_score"]          \
-                    + data["STdepression_score"] \
                     + data["creat_score"]        \
                     + data["troponin_score"]     \
                     + data["PCI_score"]
+                    #+ data["STdepression_score"] \ # Removing this improves the GRACE score
                     
 
                     
