@@ -1,6 +1,9 @@
 # ACS-machinelearning
 Create a machine learning model that is simpler and outperforms the GRACE score for acute coronary care.
 
+## Quick start: Make predictions on another dataset
+(To be filled in.)
+
 ## Files
 For each file, additional documentation is available within the file itself.
 
@@ -17,7 +20,7 @@ This file takes a CSV of data from an ACS-1 database. It cleans the data and sto
 #### Usage
 At command line, type `python clean_data.py [name of CSV file to clean]`
 
-#### Applying this file to another dataset
+#### Applying this file to learn from another dataset
 This script is specific to the optima ACS-1 dataset. In order to adapt it to another dataset, one must:
 1. Create a list of desired column names, as they appear in the first row of the CSV. 
    
