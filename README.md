@@ -2,7 +2,7 @@
 Create a machine learning model that is simpler and outperforms the GRACE score for acute coronary care.
 
 ## Quick start: Make predictions on another dataset
-The key to making predictions on another dataset is `external_validation.py`.
+The key file for making predictions on another dataset is `external_validation.py`.
 
 (To be continued)
 
@@ -42,7 +42,7 @@ This script is specific to the optima ACS-1 dataset. In order to adapt it to ano
    
    For example: `float_converters = {"age": float_error, "weight": float_error}`
 
-4. Verify that cleaning step of the script is relevant to the particular dataset.
+4. Verify that the proceeding cleaning steps of the script are relevant to the particular dataset.
 
 ### feature_selection.py
 This script contains various functions that assist in feature selection. It takes the cleaned dataset from `clean_data.py`, and outputs plots and text to the terminal.
