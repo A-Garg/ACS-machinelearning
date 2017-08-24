@@ -2,11 +2,30 @@
 Create a machine learning model that is simpler and outperforms the GRACE score for acute coronary care.
 
 ## Quick start: Make predictions on another dataset
-The key file for making predictions on another dataset is `external_validation.py`.
+Be sure that python 2.7 or above is installed. You additionally need to have these modules installed:
 
-(To be continued)
+* [numpy](https://scipy.org/install.html)
+* [pandas](https://pandas.pydata.org/pandas-docs/stable/install.html)
+* [sklearn](http://scikit-learn.org/stable/install.html)
+* [matplotlib](https://matplotlib.org/users/installing.html)
 
-## Files
+The dataset must be in CSV (comma-separated values) format. From this GitHub repository, download `external_validation.py` and `ml_classifier.pickle` into the same folder as the dataset.
+
+Open `external validation.py` using a text editor (e.g. Notepad, Notepad++). The part to edit is the section under `
+''' Variables specific to dataset: make modifications here '''`. There are four modifications to make here:
+
+1. Edit the file name: change `amiquebec2003.csv` to the file name of the dataset you are testing. Be sure to leave the quotation marks around the file.
+2. Enter the column names for the features that are used to make the predictions. **Important: the features must be in the same order as below.** The features are:
+   1. Age
+   2. Left ventricle ejection fraction
+   3. Peak creatinine (or other creatinine)
+   4. PCI/Angioplasty
+   
+   Each column name should be obtained from the first line of the CSV file. Replace `["AGE", "EJECTIONFRACTION", "peakcreat", "pci"]` as necessary. Be sure that each name is surrounded by quotation marks, and that the names are separated by spaces (i.e. don't change the current format). And again, *it is critical that the order of the features not be changed*. Otherwise, the machine learning model will be using the wrong numbers to make its predictions.
+3. Enter the name of the column containing the outcome variable, usually death. If, for example, death was encoded as `death5yr` in the dataset, change `death` to `death5yr`. Be sure the square brackets and the quotation marks remain around the outcome variable.
+4. Enter the name of the column containing the pre-computed GRACE score. This works the same way as modifying the outcome variable.
+
+## More documentation: details about each file
 For each file, additional documentation is available within the file itself.
 
 ### clean_data.py
