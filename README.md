@@ -2,7 +2,9 @@
 Create a machine learning model that is simpler and outperforms the GRACE score for acute coronary care.
 
 ## Quick start: Make predictions on another dataset
-Be sure that python 2.7 or above is installed. You additionally need to have these modules installed:
+
+### Before you start
+Be sure that python 2.7.x is installed. python 3.x may work but probably won't. You additionally need to have these modules installed:
 
 * [numpy](https://scipy.org/install.html)
 * [pandas](https://pandas.pydata.org/pandas-docs/stable/install.html)
@@ -10,6 +12,8 @@ Be sure that python 2.7 or above is installed. You additionally need to have the
 * [matplotlib](https://matplotlib.org/users/installing.html)
 
 The dataset must be in CSV (comma-separated values) format. From this GitHub repository, download `external_validation.py` and `ml_classifier.pickle` into the same folder as the dataset.
+
+### Tailoring the validation script to the dataset
 
 Open `external validation.py` using a text editor (e.g. Notepad, Notepad++). The part to edit is the section under `
 ''' Variables specific to dataset: make modifications here '''`. There are four modifications to make here:
@@ -24,6 +28,9 @@ Open `external validation.py` using a text editor (e.g. Notepad, Notepad++). The
    Each column name should be obtained from the first line of the CSV file. Replace `["AGE", "EJECTIONFRACTION", "peakcreat", "pci"]` as necessary. Be sure that each name is surrounded by quotation marks, and that the names are separated by spaces (i.e. don't change the current format). And again, *it is critical that the order of the features not be changed*. Otherwise, the machine learning model will be using the wrong numbers to make its predictions.
 3. Enter the name of the column containing the outcome variable, usually death. If, for example, death was encoded as `death5yr` in the dataset, change `death` to `death5yr`. Be sure the square brackets and the quotation marks remain around the outcome variable.
 4. Enter the name of the column containing the pre-computed GRACE score. This works the same way as modifying the outcome variable.
+
+### Running the script
+Run the python script `external_validation.py`. This can be done at command line--in the same folder, run `python external validation.py`. Or, it may be possible to simply double click the script to run it.
 
 ## More documentation: details about each file
 For each file, additional documentation is available within the file itself.
