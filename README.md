@@ -151,6 +151,8 @@ Ensure that the `.pickle` file from `clean_data.py` is available. In the section
 
 Once done, run this file at command line using `python GRACE_calculator.py`. 
 
+### external_validation.py
+This script applies the machine learning model in `ml_classifier.pickle` to a new dataset. To see how to use it, read the [Quick start guide above](https://github.com/A-Garg/ACS-machinelearning/tree/external-validation#tailoring-the-validation-script-to-the-dataset).
 
 ## Module Versions
 
