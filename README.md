@@ -2,7 +2,9 @@
 Create a machine learning model that is simpler and outperforms the GRACE score for acute coronary care.
 
 ## Quick start: Make predictions on another dataset
-(To be filled in.)
+The key to making predictions on another dataset is `external_validation.py`.
+
+(To be continued)
 
 ## Files
 For each file, additional documentation is available within the file itself.
@@ -129,11 +131,13 @@ Once done, run this file at command line using `python GRACE_calculator.py`.
 These scripts are written in Python 2.7.13.
 
 The following modules are used in the scripts:
-* pandas 0.20.2
-* numpy 1.13.1
-* matplotlib 2.0.2
-* sklearn 0.18.2
-* tqdm 4.15.0
+* [pandas 0.20.2](https://pandas.pydata.org/pandas-docs/stable/install.html)
+* [numpy 1.13.1](https://scipy.org/install.html)
+* [matplotlib 2.0.2](https://matplotlib.org/users/installing.html)
+* [sklearn 0.18.2](http://scikit-learn.org/stable/install.html)
+* [tqdm 4.15.0](https://pypi.python.org/pypi/tqdm)
+
+All of these can be downloaded in on
 
 ## Acknowledgements
 * Philippe Minh Tri Nguyen, for providing the ideas and code on which this repository is based
