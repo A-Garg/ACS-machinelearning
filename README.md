@@ -1,6 +1,26 @@
 # ACS-machinelearning
 Create a machine learning model that is simpler and outperforms the GRACE score for acute coronary care.
 
+# Table of contents
+* [Quick start: Make predictions on another dataset](#quick-start--make-predictions-on-another-dataset)
+  + [Before you start](#before-you-start)
+  + [Ensuring the dataset is ready](#ensuring-the-dataset-is-ready)
+  + [Tailoring the validation script to the dataset](#tailoring-the-validation-script-to-the-dataset)
+  + [Running the script](#running-the-script)
+* [More documentation: details about each file](#more-documentation--details-about-each-file)
+  + [clean_data.py](#clean_datapy)
+  + [feature_selection.py](#feature_selectionpy)
+  + [gridsearch.py](#gridsearchpy)
+  + [plot_gridsearch.py](#plot_gridsearchpy)
+  + [ROC_classification_report.py](#roc_classification_reportpy)
+  + [GRACE_calculator.py](#grace_calculatorpy)
+  + [external_validation.py](#external_validationpy)
+* [Module Versions](#module-versions)
+* [Contributor](#contributor)
+* [Acknowledgements](#acknowledgements)
+
+
+
 ## Quick start: Make predictions on another dataset
 
 ### Before you start
@@ -14,6 +34,19 @@ Be sure that python 2.7.x is installed. python 3.x may work but probably won't. 
 The dataset must be in CSV (comma-separated values) format. From this GitHub repository, download [external_validation.py](external_validation.py) and [ml_classifier.pickle](ml_classifier.pickle) into the same folder as the dataset. 
 
 *How to download a file*: click on the file, then click "Raw" in the top right corner. Save this file into your working directory (e.g. by using 'CRTL + S').
+
+### Ensuring the dataset is ready
+The dataset should have at columns corresponding to the following six variables, in the listed format.
+
+| Name                                              | Format                   |
+| ------------------------------------------------- | ------------------------ |
+| Age                                               | Number                   |
+| Left ventricle ejection fraction                  | Number between 0 and 100 |
+| Peak creatinine (or other creatinine measurement) | Number (in µmol/L)       |
+| PCI/Angioplasty                                   | 1 or 0                   |
+| Mortality outcome                                 | 1 or 0                   |
+| Calculated GRACE score                            | Number or probability    |
+
 
 ### Tailoring the validation script to the dataset
 
