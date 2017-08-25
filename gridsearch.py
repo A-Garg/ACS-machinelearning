@@ -9,7 +9,6 @@ Finds the best parameters for C-SVM.
 
 Input:  cleaned pandas dataframe in file 'modified_renamed_optima_data_cleaned.pickle'.
 Output: results of the grid search in gridsearch_results.pickle. 
-
 """
 
 
@@ -30,7 +29,7 @@ from sklearn import svm
 from sklearn import metrics
 
 
-# This construction allows two jobs to run simultaneously
+# This construction allows two or more jobs to run simultaneously
 if __name__ == "__main__":
     
     
@@ -39,15 +38,17 @@ if __name__ == "__main__":
     
     try: file_out = sys.argv[1]
     except IndexError:
-        print("No output file name give. Defaulting to gridsearch_results.pickle.")
-        file_out = "gridsearch_results.pickle"
+        print("No output file name given. " + 
+              "Defaulting to gridsearch_classifier and " +
+              "gridsearch_classifier_fulldata")
+        file_out = "gridsearch_classifier"
     
     
     ''' Measure time '''
     
     
     start_time = time.time()
-    print("--- Start time of script: {} ---\n".format(time.ctime()))
+    print("\n--- Start time of script: {} ---\n".format(time.ctime()))
 
     
     
@@ -63,11 +64,6 @@ if __name__ == "__main__":
 
 
     # Features to use (pick one)
-
-    # Features from Canadian ACS Risk Score 
-    ### Original parameters: age >= 75, Killip > 1, systolic BP < 100, HR > 100 bpm
-    ### See more: https://www.ncbi.nlm.nih.gov/pubmed/23816022
-    #features = data_frame[["age"]] # We only have age, need others
     
     # All features
     # features = data_frame.drop(["shock", "stroke", "mechanicalventilation", "chf", 
@@ -75,24 +71,13 @@ if __name__ == "__main__":
                                 # "bradyarrythmia", "arrrythmia", "cardiacarrest", "timibleed", 
                                 # "gibleed", "infection", "death", "any_complication"],
                                 # axis = 1)
-                   
 
-    # 8 features selected based on linear SVM weights
-    # Removed variables that could potentially affect the outcome
-    # features = data_frame[['inhospenox', 'platelets', 'age', 
-                           # 'peakcreat', 'priorcvatia',
-                           # 'INHOSPCABG', 'angioplasty', 'lvef']]
-
-                           
-    # 10 features selected based on F-score, SVM, and L2 regularization
-    # features = data_frame[['peakcreat', 'age', 'angioplasty', 'lvef', 'weight', 
-                           # 'inhospenox', 'STEMI', 'NSTEMI', 'unstable_angina', 
-                           # 'INHOSPCABG']]
-                           
+    
+    # 6 features
+    #features = data_frame[['peakcreat', 'age', 'angioplasty', 'STEMI', 'NSTEMI', 'unstable_angina']]
     
     # 3 features
-    features = data_frame[['peakcreat', 'age', 'angioplasty']]
-    
+    features = data_frame[['age', 'peakcreat', 'lvef']]
     
     
     print("Selected features: {}\n".format(list(features)))
@@ -101,7 +86,9 @@ if __name__ == "__main__":
     response = data_frame["death"]
     #response = data_frame["any_complication"]
 
+    print("Selected response: {}\n".format(response.name))
 
+    
 
     ''' Parameters of the supervised learning algorithm '''
 
@@ -113,12 +100,13 @@ if __name__ == "__main__":
 
 
     # Grid of parameters to test
-    parameters = [{'C':            np.logspace(-5,5,21),  
-                   'gamma':        np.logspace(-8,-1,22),
-                   'kernel':       ['rbf', 'linear', 'sigmoid', 'poly'],
-                   'degree':       np.array((2,3,4)),
-                   'class_weight': ['balanced', None]
-                 }]
+    C_values     = np.logspace(-5,5,21)
+    gamma_values = np.logspace(-8,-1,22)
+    
+    parameters = [{'kernel': ['rbf'],     'C': C_values, 'gamma': gamma_values, 'class_weight': ['balanced', None]},
+                  {'kernel': ['linear'],  'C': C_values,                        'class_weight': ['balanced', None]},
+                  {'kernel': ['sigmoid'], 'C': C_values,                        'class_weight': ['balanced', None]},
+                  {'kernel': ['poly'],    'C': C_values, 'degree':(2,3,4),      'class_weight': ['balanced', None]}]
        
 
 
@@ -130,7 +118,7 @@ if __name__ == "__main__":
     ''' Machine learning: Preprocessing '''
 
 
-    # Get  a list of column names since we will lose this information later
+    # Get a list of column names since we will lose this information later
     feature_names = list(features)
 
 
@@ -142,7 +130,8 @@ if __name__ == "__main__":
 
 
     # Impute missing values
-    features = preprocessing.Imputer(strategy = "mean").fit_transform(features)
+    imputer_object = preprocessing.Imputer(strategy = "mean").fit(features)
+    features = imputer_object.transform(features)
     # For categorical data, rounding will convert imputed means back to 1/0 categories
     # Thus imputing categorical values as most common value
     # Rounding the floats (age, weight) to the nearest whole number will not significantly affect the results
@@ -160,10 +149,11 @@ if __name__ == "__main__":
 
     # Standardize data for sklearn
     # Unfortunately, this also standardizes 1/0 columns
-    features = preprocessing.StandardScaler().fit_transform(features)
+    standardizer_object = preprocessing.StandardScaler().fit(features)
+    features = standardizer_object.transform(features)
+    
 
 
-            
     ''' Machine learning: main '''        
 
 
@@ -198,23 +188,31 @@ if __name__ == "__main__":
     print("\n")
 
     
-        
     # Print quick report containing precision, recall, F1 score
-    report = metrics.classification_report(y_true, y_pred)
+    report = metrics.classification_report(y_true, y_pred, digits = 3)
     print(report)                                     
 
     
-
-    # Store the pickled results in file
-    with open(file_out,"wb") as f:
+    # Store all of the pickled results in file
+    with open(file_out + "_fulldata.pickle","wb") as f:
         pickle.dump(classifier, f)
         pickle.dump(report, f)
         pickle.dump((X_train, X_test, y_train, y_test), f)
         pickle.dump(feature_names, f)
-       
+        pickle.dump(imputer_object, f)
+        pickle.dump(standardizer_object, f)        
+    
+    
+    # Store the bare-minimum needed to use the classifier elsewhere
+    with open(file_out + ".pickle", "wb") as f:
+        pickle.dump(classifier.best_estimator_, f)
+        pickle.dump(imputer_object, f)
+        pickle.dump(standardizer_object, f)
+
 
     
     ''' Finish measuring time '''
+    
     
     elapsed_time = time.time() - start_time
     
