@@ -160,7 +160,7 @@ In order to calculate confidence intervals for the areas under the ROCs, it boot
 
 
 #### Usage
-See above, [Quick start guide](https://github.com/A-Garg/ACS-machinelearning/tree/master#tailoring-the-validation-script-to-the-dataset).
+See above, [within the quick start guide](#tailoring-the-validation-script-to-the-dataset).
 
 ## Module Versions
 
@@ -174,6 +174,9 @@ The following modules are used in the scripts:
 * [tqdm 4.15.0](https://pypi.python.org/pypi/tqdm)
 
 All of these (plus other modules) can be downloaded at once through an [Anaconda distribution](https://www.continuum.io/downloads). If using Anaconda, download the Python 2.7 version instead of the Python 3.x version.
+
+## Contributor
+These scripts were written by Akhil Garg. 
 
 ## Acknowledgements
 * Philippe Minh Tri Nguyen, for providing the ideas and code on which this repository is based
