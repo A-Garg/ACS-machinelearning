@@ -135,7 +135,7 @@ plt.plot([0, 1], [0, 1],
          label = "Luck (area = {:.3f})".format(0.5),
          linestyle='--')
 
-# Plot the ROC         
+# Plot the GRACE ROC         
 plt.plot(fpr, tpr, label = "GRACE (area = {:.3f})".format(AUROC))
 plt.axis('scaled') # force 1:1 aspect ratio      
 plt.title("ROC of GRACE vs. machine learning")
