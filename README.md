@@ -67,7 +67,7 @@ Open [external_validation.py](external_validation.py) using a text editor (e.g. 
 ### Running the script
 Run the python script [external_validation.py](external_validation.py). This can be done at command line--in the same folder, run `python external validation.py`. Or, it may be possible to simply double click the script to run it.
 
-## More documentation: details about each file
+## More documentation: details about each script
 For each file, additional documentation is available within the file itself.
 
 ### [clean_data.py](clean_data.py)
