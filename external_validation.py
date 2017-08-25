@@ -5,6 +5,7 @@ Created on 2017-08-23
 @author: Akhil Garg, akhil.garg@mail.mcgill.ca
 
 Tests a machine learning model on an external dataset.
+New users: edit to the section "Variables specific to dataset: make modifications here"
 
 Input:  
     1. dataset in CSV format
@@ -38,7 +39,7 @@ file_name = "amiquebec2003.csv"
 # Enter the features within the quotes, 
     # the way they are encoded in the first line of the dataset
     # The columns must be in order: age, LVEF, peak creatinine, PCI
-feature_columns = ["AGE", "EJECTIONFRACTION", "peakcreat", "pci"]
+feature_columns = ["AGE", "peakcreat", "EJECTIONFRACTION"]
 
 # Enter the outcome variable, e.g. "death" or "death5yr"
     # (the way it is encoded in the first line of the dataset)
@@ -54,12 +55,12 @@ GRACE_column = ["GRACE"]
 
 # Read the dataset to memory
 data = pd.read_csv(file_name, 
-                   usecols    = feature_columns + response_columns + GRACE_column,
+                   usecols    = feature_columns + response_column + GRACE_column,
                    low_memory = False,
                    na_values  = [""," ","ND", "UNKNOWN"])
 
 # Load machine learning model
-with open("classifier3.pickle", "rb") as f:
+with open("ml_classifier.pickle", "rb") as f:
     classifier   = pickle.load(f)
     imputer      = pickle.load(f)
     standardizer = pickle.load(f)
@@ -69,7 +70,7 @@ features = data[feature_columns]
 print("Features: {}".format(list(features)))
 
 # Specify the response
-response = data[str(response_column)]
+response = data[str(response_column[0])]
 print("Response: {}\n".format(response.name))
 
 
@@ -77,7 +78,7 @@ print("Response: {}\n".format(response.name))
 ''' Functions '''
 
 
-def AUROC_bootstrap_CI(y_test, y_score, interval = 0.95, n_bootstraps = 1000):
+def AUROC_bootstrap_CI(y_test, y_score, interval = 0.95, n_bootstraps = 10000):
     """
     Calculates the confidence interval for the 
         area under a receiver operating curve statistic.
@@ -155,7 +156,7 @@ FPR_ML, TPR_ML, thresholds_ML = roc_curve(response, prediction_scores)
 ML_AUROC = roc_auc_score(response, prediction_scores)
 ML_CI_low, ML_CI_high = AUROC_bootstrap_CI(response, prediction_scores)
 
-#print(classification_report(response, predictions))
+print(classification_report(response, predictions))
 
 
 
@@ -189,7 +190,7 @@ print("GRACE AUROC: {:.3f} [{:0.3f} - {:0.3f}]".format(
             
 # Set plot parameters
 plt.axis('scaled') # force 1:1 aspect ratio
-plt.title("ROC of GRACE vs. machine learning")
+plt.title("ROC of GRACE vs. machine learning\nResponse = {}".format(response_column[0]))
 plt.xlabel("False positive rate")
 plt.ylabel("True positive rate")
 # Place legend in bottom right corner (since most action occurs top left)    
