@@ -92,7 +92,7 @@ if __name__ == "__main__":
 
     # Initialize type of classifier
     # (In this case, support vector machine, C-support vector)
-    estimator = svm.SVC(max_iter = 10000)
+    estimator = svm.SVC(max_iter = 10000, probability = True)
 
 
 
