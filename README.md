@@ -152,7 +152,15 @@ Ensure that the `.pickle` file from `clean_data.py` is available. In the section
 Once done, run this file at command line using `python GRACE_calculator.py`. 
 
 ### external_validation.py
-This script applies the machine learning model in `ml_classifier.pickle` to a new dataset. To see how to use it, read the [Quick start guide above](https://github.com/A-Garg/ACS-machinelearning/tree/external-validation#tailoring-the-validation-script-to-the-dataset).
+This script applies the machine learning model in `ml_classifier.pickle` to a new dataset.
+
+It takes in two files, a CSV of the dataset, as well as the pickled machine learning classifier. The script the returns receiver operating characteristic (ROC) curves for both the machine learning model and the GRACE score. 
+
+In order to calculate confidence intervals for the areas under the ROCs, it bootstraps using 10000 random variables.
+
+
+#### Usage
+See above, [Quick start guide](https://github.com/A-Garg/ACS-machinelearning/tree/master#tailoring-the-validation-script-to-the-dataset).
 
 ## Module Versions
 
