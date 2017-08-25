@@ -39,9 +39,9 @@ if __name__ == "__main__":
     try: file_out = sys.argv[1]
     except IndexError:
         print("No output file name given. " + 
-              "Defaulting to gridsearch_classifier and " +
-              "gridsearch_classifier_fulldata")
-        file_out = "gridsearch_classifier"
+              "Defaulting to ml_classifier and " +
+              "ml_classifier_fulldata")
+        file_out = "ml_classifier"
     
     
     ''' Measure time '''
@@ -71,11 +71,8 @@ if __name__ == "__main__":
                                 # "bradyarrythmia", "arrrythmia", "cardiacarrest", "timibleed", 
                                 # "gibleed", "infection", "death", "any_complication"],
                                 # axis = 1)
-
-    
-    # 6 features
-    #features = data_frame[['peakcreat', 'age', 'angioplasty', 'STEMI', 'NSTEMI', 'unstable_angina']]
-    
+                                
+                                
     # 3 features
     features = data_frame[['age', 'peakcreat', 'lvef']]
     
@@ -103,10 +100,10 @@ if __name__ == "__main__":
     C_values     = np.logspace(-5,5,21)
     gamma_values = np.logspace(-8,-1,22)
     
-    parameters = [{'kernel': ['rbf'],     'C': C_values, 'gamma': gamma_values, 'class_weight': ['balanced', None]},
-                  {'kernel': ['linear'],  'C': C_values,                        'class_weight': ['balanced', None]},
-                  {'kernel': ['sigmoid'], 'C': C_values,                        'class_weight': ['balanced', None]},
-                  {'kernel': ['poly'],    'C': C_values, 'degree':(2,3,4),      'class_weight': ['balanced', None]}]
+    parameters = [{'kernel': ['rbf'],     'C': C_values, 'class_weight': ['balanced', None], 'gamma': gamma_values},
+                  {'kernel': ['linear'],  'C': C_values, 'class_weight': ['balanced', None]},
+                  {'kernel': ['sigmoid'], 'C': C_values, 'class_weight': ['balanced', None]},
+                  {'kernel': ['poly'],    'C': C_values, 'class_weight': ['balanced', None], 'degree':(2,3,4)}]
        
 
 
