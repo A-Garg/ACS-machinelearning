@@ -34,18 +34,22 @@ import sys
 try:
     file_name = sys.argv[1]
 except IndexError:
-    print("No filename provided. Defaulting to gridsearch_results.pickle")
-    file_name = "gridsearch_results.pickle"
+    print("No filename provided. Defaulting to ml_classifier_fulldata.pickle")
+    file_name = "ml_classifier_fulldata.pickle"
     
 with open(file_name, "rb") as f:
-    classifier = pickle.load(f)
-    report     = pickle.load(f)
+    classifier          = pickle.load(f)
+    report              = pickle.load(f)
+    data                = pickle.load(f)
+    feature_names       = pickle.load(f)
+    imputer_object      = pickle.load(f)
+    standardizer_object = pickle.load(f)
     
 # Convert results to pandas data frame
 results = pd.DataFrame(classifier.cv_results_)
 
 
-   
+
 ''' Plot of all AUROCs using cross-validation '''
 
 
@@ -74,8 +78,9 @@ plt.hist(results["mean_test_score"], range = (threshold, 1), bins = 50)
 
 # Share y-axis among subplots
 # Create 4 subplots
-fig, ((ax0, ax1), (ax2, ax3)) = plt.subplots(nrows = 2, ncols = 2, sharey = "row")
-fig.suptitle("Mean cross-validated AUROC vs. various parameters (N = {})".format(N_obs)) # title for all four subplots
+fig, ((ax0, ax1, ax2), (ax3, ax4, ax5)) = plt.subplots(nrows = 2, ncols = 3, sharey = "row")
+fig.suptitle("Mean cross-validated AUROC vs. " + # title for all four subplots
+    "various hyperparameters ({} hyperparameter combinations)".format(N_obs)) 
 fig.subplots_adjust(hspace = 0.5, top = 0.85) # increase space between titles
 
 
@@ -90,7 +95,7 @@ ax0.set_ylim(threshold,1) # restrict bar graph to higher values
 
 # Plot class weight vs. test score
 # Replace "None" with "unbalanced", since None confuses pandas
-results.replace(to_replace = [None], value = "unbalanced", inplace = True)
+results["param_class_weight"].replace(to_replace = [None], value = "unbalanced", inplace = True)
 weight_means  = results["mean_test_score"].groupby(results["param_class_weight"]).mean()
 weight_names  = list(weight_means.index)
 weight_values = [value for value in weight_means[weight_names]]
@@ -98,23 +103,35 @@ ax1.set_title("class weight")
 ax1.bar(range(len(weight_values)), weight_values, tick_label = weight_names)
 
 
+# Plot polynomial degree vs. test score
+degree_means  = results["mean_test_score"].groupby(results["param_degree"]).mean()
+degree_names  = list(degree_means.index)
+degree_values = [value for value in degree_means[degree_names]]
+ax2.set_title("polynomial degree")
+ax2.bar(degree_names, degree_values, tick_label = degree_names)
+#ax2.set_ylim(threshold,1)
+
+
 # Plot gamma vs. test score
 gamma_means  = results["mean_test_score"].groupby(results["param_gamma"]).mean()
 gamma_names  = list(gamma_means.index)
 gamma_values = [value for value in gamma_means[gamma_names]]
-ax2.set_title("gamma")
-ax2.plot(gamma_names, gamma_values)
-ax2.set_xscale("log")
-ax2.set_ylim(threshold,1)
+ax3.set_title("rbf gamma")
+ax3.plot(gamma_names, gamma_values)
+ax3.set_xscale("log")
+ax3.set_ylim(threshold,1)
 
 
-# Plot gamma vs. test score
+# Plot C vs. test score
 C_means  = results["mean_test_score"].groupby(results["param_C"]).mean()
 C_names  = list(C_means.index)
 C_values = [value for value in C_means[C_names]]
-ax3.set_title("C")
-ax3.plot(C_names, C_values)
-ax3.set_xscale("log")
+ax4.set_title("C")
+ax4.plot(C_names, C_values)
+ax4.set_xscale("log")
 
+
+# Hide the axes of the last subplots
+ax5.axis("off")
 
 plt.show()
