@@ -30,13 +30,62 @@ from sklearn.preprocessing import LabelBinarizer
 import matplotlib.pyplot as plt
 
 
+
 ''' Load data '''
 
 
 with open("modified_renamed_optima_data_cleaned.pickle","rb") as f:
     data = pickle.load(f)
-    
 
+
+    
+''' Define functions '''
+
+
+def AUROC_bootstrap_CI(y_test, y_score, interval = 0.95, n_bootstraps = 10000):
+    """
+    Calculates the confidence interval for the 
+        area under a receiver operating curve statistic.
+    Code is adapted from:
+        https://stackoverflow.com/questions/19124239/scikit-learn-roc-curve-with-confidence-intervals
+        
+    Arguments
+        y_test:       the true value of the response
+        y_score:      the predicted score for the response, given by the classifier
+        interval:     the size of the confidence interval, default 0.95 (95%)
+        n_bootstraps: the number of times to resample, default 1000
+        
+    Returns a tuple: (confidence_lower, confidence_upper)
+    """
+
+    #print("\nCalculating {}% confidence interval.".format(interval*100))
+    #print("Bootstrapping with {} random samples.\n".format(n_bootstraps))
+    
+    bootstrapped_scores = []
+    rng = np.random.RandomState()
+    
+    for i in (range(n_bootstraps)):
+        # Bootstrap by sampling with replacement on the prediction indices
+        indices = rng.random_integers(0, len(y_score) - 1, len(y_score))
+        if len(np.unique(y_test[indices])) < 2:
+            # We need at least one positive and one negative sample for ROC AUC
+            # to be defined: reject the sample
+            continue
+
+        score = roc_auc_score(y_test[indices], y_score[indices])
+        bootstrapped_scores.append(score)
+
+    sorted_scores = np.sort(np.array(bootstrapped_scores))
+    
+    # Compute the lower and upper bound of the confidence interval
+    low  = (1 - interval)/2
+    high = 1 - low
+    confidence_lower = sorted_scores[int(low * len(sorted_scores))]
+    confidence_upper = sorted_scores[int(high * len(sorted_scores))]
+    
+    return (confidence_lower, confidence_upper)
+
+    
     
 ''' Create helper columns to assist with scoring '''
 
@@ -101,10 +150,9 @@ data["GRACE_score"] = data["age_score"]          \
                     + data["creat_score"]        \
                     + data["troponin_score"]     \
                     + data["PCI_score"]
-                    #+ data["STdepression_score"] \ # Removing this improves the GRACE score
-                    
 
-                    
+
+
 ''' Generate an ROC '''
 
 
@@ -115,13 +163,15 @@ kept_data = data[available_responses]
 available_scores = kept_data["GRACE_score"].apply(lambda x: not np.isnan(x))
 kept_data = kept_data[available_scores]
 
-# Convert death data to a format that sklearn likes
+# Convert data to a format that sklearn likes
 response = LabelBinarizer().fit_transform(kept_data["death"])
+response_score = kept_data["GRACE_score"].as_matrix()
 
+# Calculate AUROC, data for plotting, and confidence intervals
+AUROC = roc_auc_score(response, response_score)
+fpr, tpr, thresholds = roc_curve(response, response_score)
+GRACE_CI_low, GRACE_CI_high = AUROC_bootstrap_CI(response, response_score)
 
-AUROC = roc_auc_score(response, kept_data["GRACE_score"])
-fpr, tpr, thresholds = roc_curve(response, kept_data["GRACE_score"])
-print(AUROC)
 
 
 
@@ -136,7 +186,9 @@ plt.plot([0, 1], [0, 1],
          linestyle='--')
 
 # Plot the GRACE ROC         
-plt.plot(fpr, tpr, label = "GRACE (area = {:.3f})".format(AUROC))
+plt.plot(fpr, tpr, 
+         label = "modified GRACE (area = {:.3f}, CI = [{:0.3f} - {:0.3f}])".format(
+            AUROC, GRACE_CI_low, GRACE_CI_high))
 plt.axis('scaled') # force 1:1 aspect ratio      
 plt.title("ROC of GRACE vs. machine learning")
 plt.xlabel("False positive rate")
@@ -148,23 +200,30 @@ plt.ylabel("True positive rate")
 
 
 # Only compare two machine learning models for clarity
-file_list = ["gridsearch_results_3_features.pickle", 
-             "gridsearch_results_6_features.pickle"]
+file_list = ["classifier3_fulldata.pickle", 
+             "classifier4_fulldata.pickle"]
 
 for file in file_list:
     with open(file, "rb") as f:
-        classifier = pickle.load(f).best_estimator_
-        report     = pickle.load(f)
-        X_train, X_test, y_train, y_test = pickle.load(f)
-        feature_list = pickle.load(f)
+        classifier          = pickle.load(f)
+        report              = pickle.load(f)
+        data                = pickle.load(f)
+        feature_names       = pickle.load(f)
+        imputer_object      = pickle.load(f)
+        standardizer_object = pickle.load(f)
     
-    # Calculate data for plotting ROC
+    (X_train, X_test, y_train, y_test) = data
+    
+    # Calculate data for plotting ROC as well as confidence intervals
     y_score = classifier.decision_function(X_test)
     fpr, tpr, thresholds = roc_curve(y_test, y_score)
     AUROC = roc_auc_score(y_test, y_score)
+    ML_CI_low, ML_CI_high = AUROC_bootstrap_CI(y_test, y_score)
+
     
     # Get the number from the file name, and use it as the label
-    label = "ML {} features (area = {:.3f})".format(re.search("\d+", file).group(0), AUROC)
+    label = "ML {} features (area = {:.3f}, CI = [{:0.3f} - {:0.3f}])".format(
+        re.search("\d+", file).group(0), AUROC, ML_CI_low, ML_CI_high)
     plt.plot(fpr, tpr, label = label)
  
 # Place legend in bottom right corner (since most action occurs top left)    
