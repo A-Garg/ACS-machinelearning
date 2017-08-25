@@ -1,12 +1,43 @@
 # ACS-machinelearning
 Create a machine learning model that is simpler and outperforms the GRACE score for acute coronary care.
 
-## Files
+## Quick start: Make predictions on another dataset
+
+### Before you start
+Be sure that python 2.7.x is installed. python 3.x may work but probably won't. You additionally need to have these modules installed:
+
+* [numpy](https://scipy.org/install.html)
+* [pandas](https://pandas.pydata.org/pandas-docs/stable/install.html)
+* [sklearn](http://scikit-learn.org/stable/install.html)
+* [matplotlib](https://matplotlib.org/users/installing.html)
+
+The dataset must be in CSV (comma-separated values) format. From this GitHub repository, download `external_validation.py` and `ml_classifier.pickle` into the same folder as the dataset.
+
+### Tailoring the validation script to the dataset
+
+Open `external validation.py` using a text editor (e.g. Notepad, Notepad++). The part to edit is the section under `
+''' Variables specific to dataset: make modifications here '''`. There are four modifications to make here:
+
+1. Edit the file name: change `amiquebec2003.csv` to the file name of the dataset you are testing. Be sure to leave the quotation marks around the file.
+2. Enter the column names for the features that are used to make the predictions. **Important: the features must be in the same order as below.** The features are:
+   1. Age
+   2. Left ventricle ejection fraction
+   3. Peak creatinine (or other creatinine)
+   4. PCI/Angioplasty
+   
+   Each column name should be obtained from the first line of the CSV file. Replace `["AGE", "EJECTIONFRACTION", "peakcreat", "pci"]` as necessary. Be sure that each name is surrounded by quotation marks, and that the names are separated by spaces (i.e. don't change the current format). And again, *it is critical that the order of the features not be changed*. Otherwise, the machine learning model will be using the wrong numbers to make its predictions.
+3. Enter the name of the column containing the outcome variable, usually death. If, for example, death was encoded as `death5yr` in the dataset, change `death` to `death5yr`. Be sure the square brackets and the quotation marks remain around the outcome variable.
+4. Enter the name of the column containing the pre-computed GRACE score. This works the same way as modifying the outcome variable.
+
+### Running the script
+Run the python script `external_validation.py`. This can be done at command line--in the same folder, run `python external validation.py`. Or, it may be possible to simply double click the script to run it.
+
+## More documentation: details about each file
 For each file, additional documentation is available within the file itself.
 
 ### clean_data.py
 
-This file takes a CSV of data from an ACS-1 database. It cleans the data and stores it in a Pandas dataframe, which is written to a pickled file. Cleaning includes:
+This file takes a CSV of data from the ACS-1 database. It cleans the data and stores it in a Pandas dataframe, which is written to a pickled file. Cleaning includes:
 * Renaming some columns
 * Changing string encodings to numbers (e.g. YES/NO to 1/0)
 * Removing some obviously mis-entered numbers
@@ -17,7 +48,7 @@ This file takes a CSV of data from an ACS-1 database. It cleans the data and sto
 #### Usage
 At command line, type `python clean_data.py [name of CSV file to clean]`
 
-#### Applying this file to another dataset
+#### Applying this file to learn from another dataset
 This script is specific to the optima ACS-1 dataset. In order to adapt it to another dataset, one must:
 1. Create a list of desired column names, as they appear in the first row of the CSV. 
    
@@ -37,7 +68,7 @@ This script is specific to the optima ACS-1 dataset. In order to adapt it to ano
    
    For example: `float_converters = {"age": float_error, "weight": float_error}`
 
-4. Verify that cleaning step of the script is relevant to the particular dataset.
+4. Verify that the proceeding cleaning steps of the script are relevant to the particular dataset.
 
 ### feature_selection.py
 This script contains various functions that assist in feature selection. It takes the cleaned dataset from `clean_data.py`, and outputs plots and text to the terminal.
@@ -98,17 +129,51 @@ One must first modify `file_list` and `label_list`. `file_list` should contain a
 
 Once `file_list` and `label_list` are completed, run this program at command line by entering `python ROC_classification_report.py`
 
+### GRACE_calculator.py
+This script calculates the GRACE score for items in the cleaned ACS-1 database. The GRACE score is calculated from various characteristics as detailed in [Figure 4](http://jamanetwork.com/data/Journals/INTEMED/5461/ioi21057f4.png) of the article [*Predictors of Hospital Mortality in the Global Registry of Acute Coronary Events*](http://jamanetwork.com/journals/jamainternalmedicine/fullarticle/216232).
+
+Once the script calculates the GRACE score, it calculates and produces its receiver operating characteristic (ROC). It then plots this ROC against those of machine learning classifiers as a comparison.
+
+Because the ACS-1 database does not contain all of the variables that contribute to the GRACE score, some simplifying assumptions are made.
+
+Four variables are ignored:
+* History of congestive heart failure
+* History of myocardial infarction
+* Resting heart rate
+* Systolic blood pressure
+
+The cutoffs for an abnormal troponin level are set at:
+* 0.01 ng/mL for troponin-T
+* 0.02 ng/mL for troponin-I
+
+#### Usage
+Ensure that the `.pickle` file from `clean_data.py` is available. In the section of the program labelled `Load data`, type the name of this file. For the comparisons with the machine learning classifiers, the results from `gridsearch.py` must also be present, and it will be necessary to update the list `file_list` accordingly. 
+
+Once done, run this file at command line using `python GRACE_calculator.py`. 
+
+### external_validation.py
+This script applies the machine learning model in `ml_classifier.pickle` to a new dataset.
+
+It takes in two files, a CSV of the dataset, as well as the pickled machine learning classifier. The script the returns receiver operating characteristic (ROC) curves for both the machine learning model and the GRACE score. 
+
+In order to calculate confidence intervals for the areas under the ROCs, it bootstraps using 10000 random variables.
+
+
+#### Usage
+See above, [Quick start guide](https://github.com/A-Garg/ACS-machinelearning/tree/master#tailoring-the-validation-script-to-the-dataset).
 
 ## Module Versions
 
 These scripts are written in Python 2.7.13.
 
 The following modules are used in the scripts:
-* pandas 0.20.2
-* numpy 1.13.1
-* matplotlib 2.0.2
-* sklearn 0.18.2
-* tqdm 4.15.0
+* [pandas 0.20.2](https://pandas.pydata.org/pandas-docs/stable/install.html)
+* [numpy 1.13.1](https://scipy.org/install.html)
+* [matplotlib 2.0.2](https://matplotlib.org/users/installing.html)
+* [sklearn 0.18.2](http://scikit-learn.org/stable/install.html)
+* [tqdm 4.15.0](https://pypi.python.org/pypi/tqdm)
+
+All of these (plus other modules) can be downloaded at once through an [Anaconda distribution](https://www.continuum.io/downloads). If using Anaconda, download the Python 2.7 version instead of the Python 3.x version.
 
 ## Acknowledgements
 * Philippe Minh Tri Nguyen, for providing the ideas and code on which this repository is based
