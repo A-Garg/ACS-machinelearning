@@ -173,7 +173,7 @@ The following modules are used in the scripts:
 * [sklearn 0.18.2](http://scikit-learn.org/stable/install.html)
 * [tqdm 4.15.0](https://pypi.python.org/pypi/tqdm)
 
-All of these can be downloaded in on
+All of these (plus other modules) can be downloaded at once through an [Anaconda distribution](https://www.continuum.io/downloads). If using Anaconda, download the Python 2.7 version instead of the Python 3.x version.
 
 ## Acknowledgements
 * Philippe Minh Tri Nguyen, for providing the ideas and code on which this repository is based
