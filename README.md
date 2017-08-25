@@ -96,19 +96,27 @@ Each function in this script can also be imported into other python scripts.
 Takes data that is outputted by [clean_data.py](clean_data.py), and finds the best parameters for classification.
 The classification parameters apply to a support vector machine:
 Each parameter combination is tested using 10-fold stratified cross-validation.
-Outputs a results file containing serialized objects.
+Outputs two results files containing serialized objects. The first, which ends with `_fulldata.pickle`, contains all of the data to reproduce the output of this file. The second, which is the same file name but without the `_fulldata`, contains just enough information to apply the best classifier from the gridsearch to a new problem.
 
 The parameters tested are:
 * C
-* gamma
 * kernel
 * class weight
+* gamma, if kernel is RBF (radial basis function)
+* degree, if kernel is polynomial
 
-The serialized objects (pickled) are, in order:
-1. classifier (sklearn.model_selection.GridSearchCV object)
+For the `fulldata.pickle` file, the serialized (pickled) objects are, in order:
+1. all gridsearch classifiers (sklearn.model_selection.GridSearchCV object)
 2. classification report (string from sklearn.metrics.classification_report)
 3. train and test data (tuple of X_train, X_test, y_train, y_test)
 4. feature names (list)
+5. imputer (sklearn.preprocessing.Imputer object)
+6. standardizer (sklearn.preprocessing.StandardScalar object)
+
+For the other `.pickle` file, the serialized (pickled) objects are:
+1. the best gridsearch classifier (sklearn.svm.SVC object)
+2. imputer (sklearn.preprocessing.Imputer object)
+3. standardizer (sklearn.preprocessing.StandardScalar object) 
 
 #### Usage
 Select features to use by setting the variable `features` equal to a list of features from `data_frame`. For example: `features = data_frame[["age", "weight", "female"]]`
