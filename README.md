@@ -140,16 +140,18 @@ The parameters tested are:
 
 For the `fulldata.pickle` file, the serialized (pickled) objects are, in order:
 1. all gridsearch classifiers (sklearn.model_selection.GridSearchCV object)
-2. classification report (string from sklearn.metrics.classification_report)
-3. train and test data (tuple of X_train, X_test, y_train, y_test)
-4. feature names (list)
-5. imputer (sklearn.preprocessing.Imputer object)
-6. standardizer (sklearn.preprocessing.StandardScalar object)
+2. imputer (sklearn.preprocessing.Imputer object)
+3. standardizer (sklearn.preprocessing.StandardScalar object)
+4. classification report (string from sklearn.metrics.classification_report)
+5. train and test data (tuple of X_train, X_test, y_train, y_test)
+6. feature names (list)
 
 For the other `.pickle` file, the serialized (pickled) objects are:
 1. the best gridsearch classifier (sklearn.svm.SVC object)
 2. imputer (sklearn.preprocessing.Imputer object)
-3. standardizer (sklearn.preprocessing.StandardScalar object) 
+3. standardizer (sklearn.preprocessing.StandardScalar object)
+
+Because the order of the first three pickled objects is the same in both `.pickle` files, the `fulldata.pickle` can substitute for the condensed file if needed.
 
 #### Usage
 Select features to use by setting the variable `features` equal to a list of features from `data_frame`. For example: `features = data_frame[["age", "weight", "female"]]`
