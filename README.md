@@ -53,7 +53,7 @@ The dataset should have at columns corresponding to the following six variables,
 Open [external_validation.py](external_validation.py) using a text editor (e.g. Notepad, Notepad++). The part to edit is the section under `
 ''' Variables specific to dataset: make modifications here '''`. There are four modifications to make here:
 
-1. Edit the file name: change `amiquebec2003.csv` to the file name of the dataset you are testing. Be sure to leave the quotation marks around the file.
+1. Edit the file name: change `amiquebec2003.csv` to the file the dataset you are testing. Be sure to leave the quotation marks around the file.
 2. Enter the column names for the features that are used to make the predictions. **Important: the features must be in the same order as below.** The features are:
    1. Age
    2. Left ventricle ejection fraction
@@ -140,21 +140,23 @@ The parameters tested are:
 
 For the `fulldata.pickle` file, the serialized (pickled) objects are, in order:
 1. all gridsearch classifiers (sklearn.model_selection.GridSearchCV object)
-2. classification report (string from sklearn.metrics.classification_report)
-3. train and test data (tuple of X_train, X_test, y_train, y_test)
-4. feature names (list)
-5. imputer (sklearn.preprocessing.Imputer object)
-6. standardizer (sklearn.preprocessing.StandardScalar object)
+2. imputer (sklearn.preprocessing.Imputer object)
+3. standardizer (sklearn.preprocessing.StandardScalar object)
+4. classification report (string from sklearn.metrics.classification_report)
+5. train and test data (tuple of X_train, X_test, y_train, y_test)
+6. feature names (list)
 
 For the other `.pickle` file, the serialized (pickled) objects are:
 1. the best gridsearch classifier (sklearn.svm.SVC object)
 2. imputer (sklearn.preprocessing.Imputer object)
-3. standardizer (sklearn.preprocessing.StandardScalar object) 
+3. standardizer (sklearn.preprocessing.StandardScalar object)
+
+Because the order of the first three pickled objects is the same in both `.pickle` files, the `fulldata.pickle` can substitute for the condensed file if needed.
 
 #### Usage
 Select features to use by setting the variable `features` equal to a list of features from `data_frame`. For example: `features = data_frame[["age", "weight", "female"]]`
 
-At command line, type `python gridsearch.py [name of output file]`
+At command line, type `python gridsearch.py [name of output file without file extension]`.
 
 ### [plot_gridsearch.py](plot_gridsearch.py)
 Plot a histogram of areas under receiver operating characteristic (AUROC) curve, as well as mean AUROC vs. each parameter.
