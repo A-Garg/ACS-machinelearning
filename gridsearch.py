@@ -63,7 +63,7 @@ if __name__ == "__main__":
     ''' Feature and response selection '''    
 
 
-    # Features to use (pick one)
+    # Features to use
     
     # All features
     # features = data_frame.drop(["shock", "stroke", "mechanicalventilation", "chf", 
@@ -73,8 +73,8 @@ if __name__ == "__main__":
                                 # axis = 1)
                                 
                                 
-    # 3 features
-    features = data_frame[['age', 'peakcreat', 'lvef']]
+    # Manual feature selection
+    features = data_frame[['age','peakcreat','lvef']]
     
     
     print("Selected features: {}\n".format(list(features)))
@@ -98,7 +98,7 @@ if __name__ == "__main__":
 
     # Grid of parameters to test
     C_values     = np.logspace(-5,5,21)
-    gamma_values = np.logspace(-8,-1,22)
+    gamma_values = np.logspace(-10,-1,24)
     
     parameters = [{'kernel': ['rbf'],     'C': C_values, 'class_weight': ['balanced', None], 'gamma': gamma_values},
                   {'kernel': ['linear'],  'C': C_values, 'class_weight': ['balanced', None]},
@@ -193,11 +193,12 @@ if __name__ == "__main__":
     # Store all of the pickled results in file
     with open(file_out + "_fulldata.pickle","wb") as f:
         pickle.dump(classifier, f)
+        pickle.dump(imputer_object, f)
+        pickle.dump(standardizer_object, f) 
         pickle.dump(report, f)
         pickle.dump((X_train, X_test, y_train, y_test), f)
         pickle.dump(feature_names, f)
-        pickle.dump(imputer_object, f)
-        pickle.dump(standardizer_object, f)        
+       
     
     
     # Store the bare-minimum needed to use the classifier elsewhere
