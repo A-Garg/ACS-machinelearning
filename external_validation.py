@@ -21,6 +21,7 @@ Output: ROCs of mortality predicted by GRACE score vs. machine learning
 import numpy as np # matrix and math tools, version 1.13.1
 import pandas as pd # data manipulation, version 0.20.2
 import pickle # restore and write serialized data from/to file
+import sys # accept arguments at command line
 
 # scikit-learn version 0.18.2, tools for machine learning
 from sklearn.metrics import roc_curve, roc_auc_score, classification_report
@@ -38,10 +39,10 @@ file_name = "amiquebec2003.csv"
 
 # Enter the features within the quotes, 
     # the way they are encoded in the first line of the dataset
-    # The columns must be in order: age, LVEF, peak creatinine, PCI
+    # The columns must be in order: age, peak creatinine, LVEF
 feature_columns = ["AGE", "peakcreat", "EJECTIONFRACTION"]
 
-# Enter the outcome variable, e.g. "death" or "death5yr"
+# Enter the outcome variable, e.g. "death" or "death5yr" or "cvdeat"
     # (the way it is encoded in the first line of the dataset)
 response_column = ["death"]
 
@@ -59,8 +60,15 @@ data = pd.read_csv(file_name,
                    low_memory = False,
                    na_values  = [""," ","ND", "UNKNOWN"])
 
+
+try: ml_model_file = sys.argv[1]
+except IndexError:
+    print("No machine learning file specified. ", end = "")
+    print("Defaulting to 'ml_classifier.pickle'")
+    ml_model_file = 'ml_classifier.pickle'
+                   
 # Load machine learning model
-with open("ml_classifier.pickle", "rb") as f:
+with open(ml_model_file, "rb") as f:
     classifier   = pickle.load(f)
     imputer      = pickle.load(f)
     standardizer = pickle.load(f)
