@@ -206,11 +206,12 @@ file_list = ["classifier3_fulldata.pickle",
 for file in file_list:
     with open(file, "rb") as f:
         classifier          = pickle.load(f)
+        imputer_object      = pickle.load(f)
+        standardizer_object = pickle.load(f)        
         report              = pickle.load(f)
         data                = pickle.load(f)
         feature_names       = pickle.load(f)
-        imputer_object      = pickle.load(f)
-        standardizer_object = pickle.load(f)
+
     
     (X_train, X_test, y_train, y_test) = data
     
@@ -229,6 +230,3 @@ for file in file_list:
 # Place legend in bottom right corner (since most action occurs top left)    
 plt.legend(loc = "lower right")   
 plt.show()
-
-
-
