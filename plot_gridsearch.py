@@ -39,11 +39,12 @@ except IndexError:
     
 with open(file_name, "rb") as f:
     classifier          = pickle.load(f)
+    imputer_object      = pickle.load(f)
+    standardizer_object = pickle.load(f)    
     report              = pickle.load(f)
     data                = pickle.load(f)
     feature_names       = pickle.load(f)
-    imputer_object      = pickle.load(f)
-    standardizer_object = pickle.load(f)
+
     
 # Convert results to pandas data frame
 results = pd.DataFrame(classifier.cv_results_)
