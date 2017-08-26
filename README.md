@@ -53,7 +53,7 @@ The dataset should have at columns corresponding to the following six variables,
 Open [external_validation.py](external_validation.py) using a text editor (e.g. Notepad, Notepad++). The part to edit is the section under `
 ''' Variables specific to dataset: make modifications here '''`. There are four modifications to make here:
 
-1. Edit the file name: change `amiquebec2003.csv` to the file name of the dataset you are testing. Be sure to leave the quotation marks around the file.
+1. Edit the file name: change `amiquebec2003.csv` to the file the dataset you are testing. Be sure to leave the quotation marks around the file.
 2. Enter the column names for the features that are used to make the predictions. **Important: the features must be in the same order as below.** The features are:
    1. Age
    2. Left ventricle ejection fraction
@@ -156,7 +156,7 @@ Because the order of the first three pickled objects is the same in both `.pickl
 #### Usage
 Select features to use by setting the variable `features` equal to a list of features from `data_frame`. For example: `features = data_frame[["age", "weight", "female"]]`
 
-At command line, type `python gridsearch.py [name of output file]`
+At command line, type `python gridsearch.py [name of output file without file extension]`.
 
 ### [plot_gridsearch.py](plot_gridsearch.py)
 Plot a histogram of areas under receiver operating characteristic (AUROC) curve, as well as mean AUROC vs. each parameter.
