@@ -18,6 +18,7 @@ import numpy as np # matrix and math tools, version 1.13.1
 import pandas as pd # data manipulation, version 0.20.2
 import pickle # restore and write serialized data from/to file
 import itertools # to cycle through line styles
+import re # regex
 
 # scikit-learn version 0.18.2: tools for machine learning
 from sklearn.metrics import roc_curve, roc_auc_score
@@ -30,24 +31,15 @@ import matplotlib.pyplot as plt
 ''' Load data '''
 
 
-# Modify file_list and label_list as new gridsearch results are produced
-# Both lists must be in the same order
-file_list  = ["gridsearch_results_weight_only.pickle",
-              "gridsearch_results_age_only.pickle",
-              "gridsearch_results_2_features.pickle",
-              "gridsearch_results_3_features.pickle",
-              "gridsearch_results_5_features.pickle",
-              "gridsearch_results_8_features.pickle",
-              "gridsearch_results_10_features.pickle",
-              "gridsearch_results_all_features.pickle"]
-              
-label_list = ["Weight only", "Age only", 
-              "2 features", "3 features", 
-              "5 features", "8 features", "10 features",
-              "All 74 features"] 
-              
-            
+# Modify file_list as new gridsearch results are produced
+file_list  = ["classifier3_fulldata.pickle",
+              "classifier4_fulldata.pickle",
+              "classifier5_fulldata.pickle",
+              "classifier6_fulldata.pickle"]
 
+label_list = [re.search("\d+",f).group(0)+" features" for f in file_list]             
+
+              
 
 print("Plotting results from files:")
 print(file_list)
@@ -61,13 +53,13 @@ feature_lists = []
 # Get serialized data from files
 for i in range(len(file_list)):
     with open(file_list[i], "rb") as f:
-        classifiers.append(pickle.load(f))
-        reports.append(pickle.load(f))
-        
+        classifiers.append   (pickle.load(f))
+        imputer_object      = pickle.load(f)
+        standardizer_object = pickle.load(f) 
+        reports.append       (pickle.load(f))
         X_train, X_test, y_train, y_test = pickle.load(f)
         sets.append((X_train, X_test, y_train, y_test))
-        
-        feature_lists.append(pickle.load(f))
+        feature_lists.append (pickle.load(f))
     
 
     
