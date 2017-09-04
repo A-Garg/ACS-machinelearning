@@ -145,6 +145,9 @@ features = features[available_responses]
 response = response[available_responses]
 GRACE    = GRACE   [available_responses]                                        
 
+# Create a new column for >50% GRACE mortality (score >= 210)
+GRACE_predictions = np.where(GRACE >= 210,  1, 0)
+
 # Impute missing values from features
 features = imputer.transform(features)
 # For categorical data, rounding will convert imputed means back to 1/0 categories
@@ -165,21 +168,23 @@ features = standardizer.transform(features)
 
 
 # Use decision function to make predictions
-prediction_scores = classifier.decision_function(features)
-predictions       = classifier.predict(features)
+ml_prediction_scores = classifier.decision_function(features)
+ml_predictions       = classifier.predict(features)
 
 # Use probability instead of decision function
 # Both options should give the same result
-#prediction_scores = classifier.predict_proba(features)
-#prediction_scores = np.array([prediction_scores[i][1] for i in range(len(prediction_scores))])
+#ml_prediction_scores = classifier.predict_proba(features)
+#ml_prediction_scores = np.array([ml_prediction_scores[i][1] for i in range(len(ml_prediction_scores))])
 
 
-FPR_ML, TPR_ML, thresholds_ML = roc_curve(response, prediction_scores)
-ML_AUROC = roc_auc_score(response, prediction_scores)
-ML_CI_low, ML_CI_high = AUROC_bootstrap_CI(response, prediction_scores)
+FPR_ML, TPR_ML, thresholds_ML = roc_curve(response, ml_prediction_scores)
+ML_AUROC = roc_auc_score(response, ml_prediction_scores)
+ML_CI_low, ML_CI_high = AUROC_bootstrap_CI(response, ml_prediction_scores)
 
-print(classification_report(response, predictions))
-print("\nMachine learning accuracy: {:.3f}".format(accuracy_score(response, predictions)))
+# Print reports to console
+print("\nClassification report for machine learning:")
+print(classification_report(response, ml_predictions))
+print("\nMachine learning accuracy: {:.3f}".format(accuracy_score(response, ml_predictions)))
 
 
 
@@ -208,6 +213,11 @@ GRACE_CI_low, GRACE_CI_high = AUROC_bootstrap_CI(response, GRACE)
 plt.plot(FPR_GRACE, TPR_GRACE, 
          label = "GRACE (area = {:.3f}, CI = [{:0.3f} - {:0.3f}])".format(
             GRACE_AUROC, GRACE_CI_low, GRACE_CI_high))
+            
+# Print reports to console
+print("\nClassification report for GRACE:")
+print(classification_report(response, GRACE_predictions))
+print("\nGRACE accuracy: {:.3f}".format(accuracy_score(response, GRACE_predictions)))
 print("GRACE AUROC: {:.3f} [{:0.3f} - {:0.3f}]".format(
       GRACE_AUROC, GRACE_CI_low, GRACE_CI_high))
             
