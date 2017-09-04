@@ -36,31 +36,28 @@ The dataset must be in CSV (comma-separated values) format. From this GitHub rep
 *How to download a file*: click on the file, then click "Raw" in the top right corner. Save this file into your working directory (e.g. by using 'CRTL + S').
 
 ### Ensuring the dataset is ready
-The dataset should have at columns corresponding to the following six variables, in the listed format.
+The dataset should have at columns corresponding to the following five variables, in the listed format.
 
 | Name                                              | Format                   |
 | ------------------------------------------------- | ------------------------ |
 | Age                                               | Number                   |
 | Left ventricle ejection fraction                  | Number between 0 and 100 |
 | Peak creatinine (or other creatinine measurement) | Number (in µmol/L)       |
-| PCI/Angioplasty                                   | 1 or 0                   |
 | Mortality outcome                                 | 1 or 0                   |
 | Calculated GRACE score                            | Number or probability    |
 
 
 ### Tailoring the validation script to the dataset
 
-Open [external_validation.py](external_validation.py) using a text editor (e.g. Notepad, Notepad++). The part to edit is the section under `
-''' Variables specific to dataset: make modifications here '''`. There are four modifications to make here:
+Open [external_validation.py](external_validation.py) using a text editor (e.g. Notepad, Notepad++). The part to edit is the section under `''' Variables specific to dataset: make modifications here '''`. There are four modifications to make here:
 
 1. Edit the file name: change `amiquebec2003.csv` to the file the dataset you are testing. Be sure to leave the quotation marks around the file.
 2. Enter the column names for the features that are used to make the predictions. **Important: the features must be in the same order as below.** The features are:
    1. Age
    2. Left ventricle ejection fraction
    3. Peak creatinine (or other creatinine)
-   4. PCI/Angioplasty
    
-   Each column name should be obtained from the first line of the CSV file. Replace `["AGE", "EJECTIONFRACTION", "peakcreat", "pci"]` as necessary. Be sure that each name is surrounded by quotation marks, and that the names are separated by spaces (i.e. don't change the current format). And again, *it is critical that the order of the features not be changed*. Otherwise, the machine learning model will be using the wrong numbers to make its predictions.
+   Each column name should be obtained from the first line of the CSV file. Replace `["AGE", "EJECTIONFRACTION", "peakcreat"]` as necessary. Be sure that each name is surrounded by quotation marks, and that the names are separated by spaces (i.e. don't change the current format). And again, *it is critical that the order of the features not be changed*. Otherwise, the machine learning model will be using the wrong numbers to make its predictions.
 3. Enter the name of the column containing the outcome variable, usually death. If, for example, death was encoded as `death5yr` in the dataset, change `death` to `death5yr`. Be sure the square brackets and the quotation marks remain around the outcome variable.
 4. Enter the name of the column containing the pre-computed GRACE score. This works the same way as modifying the outcome variable.
 
@@ -137,6 +134,12 @@ The parameters tested are:
 * class weight
 * gamma, if kernel is RBF (radial basis function)
 * degree, if kernel is polynomial
+
+When tested on the AMI-optima dataset, the imputed values were the mean of available values:
+* Age: 68.3
+* Peak creatinine: 120.3
+* LVEF: 60.0
+For categorical variables, the most common category was imputed.
 
 For the `fulldata.pickle` file, the serialized (pickled) objects are, in order:
 1. all gridsearch classifiers (sklearn.model_selection.GridSearchCV object)
