@@ -24,7 +24,8 @@ import pickle # restore and write serialized data from/to file
 import sys # accept arguments at command line
 
 # scikit-learn version 0.18.2, tools for machine learning
-from sklearn.metrics import roc_curve, roc_auc_score, classification_report
+from sklearn.metrics import roc_curve, roc_auc_score
+from sklearn.metrics import accuracy_score, classification_report
 
 # matplotlib version 2.0.2: tools for plotting
 import matplotlib.pyplot as plt
@@ -41,6 +42,7 @@ file_name = "amiquebec2003.csv"
     # the way they are encoded in the first line of the dataset
     # The columns must be in order: age, peak creatinine, LVEF
 feature_columns = ["AGE", "peakcreat", "EJECTIONFRACTION"]
+
 
 # Enter the outcome variable, e.g. "death" or "death5yr" or "cvdeat"
     # (the way it is encoded in the first line of the dataset)
@@ -63,7 +65,7 @@ data = pd.read_csv(file_name,
 
 try: ml_model_file = sys.argv[1]
 except IndexError:
-    print("No machine learning file specified. ", end = "")
+    print("\nNo machine learning file specified. ", end = "")
     print("Defaulting to 'ml_classifier.pickle'")
     ml_model_file = 'ml_classifier.pickle'
                    
@@ -80,6 +82,9 @@ print("Features: {}".format(list(features)))
 # Specify the response
 response = data[str(response_column[0])]
 print("Response: {}\n".format(response.name))
+
+# Specify the GRACE column
+GRACE = data[str(GRACE_column[0])]
 
 
 
@@ -138,16 +143,18 @@ def AUROC_bootstrap_CI(y_test, y_score, interval = 0.95, n_bootstraps = 10000):
 available_responses = response.apply(lambda x: x in [0,1])
 features = features[available_responses]
 response = response[available_responses]
+GRACE    = GRACE   [available_responses]                                        
 
-# Impute missing values
+# Impute missing values from features
 features = imputer.transform(features)
 # For categorical data, rounding will convert imputed means back to 1/0 categories
 # Thus imputing categorical values as most common value
 # Rounding the floats (age) to the nearest whole number will not significantly affect the results
 features = features.round()
 
-# Reshape response to feed to machine learning model
+# Reshape response and GRACE to feed to machine learning model
 response = response.as_matrix()
+GRACE    = GRACE.as_matrix()                            
 
 # Standardize the data
 features = standardizer.transform(features)
@@ -157,14 +164,22 @@ features = standardizer.transform(features)
 ''' Test the machine learning model on the data '''
 
 
+# Use decision function to make predictions
 prediction_scores = classifier.decision_function(features)
 predictions       = classifier.predict(features)
+
+# Use probability instead of decision function
+# Both options should give the same result
+#prediction_scores = classifier.predict_proba(features)
+#prediction_scores = np.array([prediction_scores[i][1] for i in range(len(prediction_scores))])
+
 
 FPR_ML, TPR_ML, thresholds_ML = roc_curve(response, prediction_scores)
 ML_AUROC = roc_auc_score(response, prediction_scores)
 ML_CI_low, ML_CI_high = AUROC_bootstrap_CI(response, prediction_scores)
 
 print(classification_report(response, predictions))
+print("\nMachine learning accuracy: {:.3f}".format(accuracy_score(response, predictions)))
 
 
 
@@ -186,9 +201,9 @@ print("Machine learning AUROC: {:.3f} [{:0.3f} - {:0.3f}]".format(
       ML_AUROC, ML_CI_low, ML_CI_high))
 
 # Plot the GRACE ROC
-GRACE_AUROC = roc_auc_score(response, data["GRACE"])
-FPR_GRACE, TPR_GRACE, thresholds_GRACE = roc_curve(response, data["GRACE"])
-GRACE_CI_low, GRACE_CI_high = AUROC_bootstrap_CI(response, data["GRACE"])
+GRACE_AUROC = roc_auc_score(response, GRACE)
+FPR_GRACE, TPR_GRACE, thresholds_GRACE = roc_curve(response, GRACE)
+GRACE_CI_low, GRACE_CI_high = AUROC_bootstrap_CI(response, GRACE)
 
 plt.plot(FPR_GRACE, TPR_GRACE, 
          label = "GRACE (area = {:.3f}, CI = [{:0.3f} - {:0.3f}])".format(
