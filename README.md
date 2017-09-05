@@ -14,6 +14,7 @@ Create a machine learning model that is simpler and outperforms the GRACE score 
   + [plot_gridsearch.py](#plot_gridsearchpy)
   + [ROC_classification_report.py](#roc_classification_reportpy)
   + [GRACE_calculator.py](#grace_calculatorpy)
+  + [hyperplane.py](#hyperplanepy)
   + [external_validation.py](#external_validationpy)
 * [Module Versions](#module-versions)
 * [Contributor](#contributor)
@@ -22,6 +23,7 @@ Create a machine learning model that is simpler and outperforms the GRACE score 
 
 
 ## Quick start: Make predictions on another dataset
+
 
 ### Before you start
 Be sure that python 2.7.x is installed. python 3.x may work but probably won't. You additionally need to have these modules installed:
@@ -67,6 +69,7 @@ Run the python script [external_validation.py](external_validation.py). This can
 ## More documentation: details about each script
 For each file, additional documentation is available within the file itself.
 
+
 ### [clean_data.py](clean_data.py)
 
 This file takes a CSV of data from the ACS-1 database. It cleans the data and stores it in a Pandas dataframe, which is written to a pickled file. Cleaning includes:
@@ -102,6 +105,7 @@ This script is specific to the optima ACS-1 dataset. In order to adapt it to ano
 
 4. Verify that the proceeding cleaning steps of the script are relevant to the particular dataset.
 
+
 ### [feature_selection.py](feature_selection.py)
 This script contains various functions that assist in feature selection. It takes the cleaned dataset from `clean_data.py`, and outputs plots and text to the terminal.
 
@@ -121,6 +125,7 @@ Each method is described in further detail where it is defined in the script, or
 After selecting the desired methods, run `python feature_selection.py` at the command line.
 
 Each function in this script can also be imported into other python scripts.
+
 
 ### [gridsearch.py](gridsearch.py)
 Takes data that is outputted by [clean_data.py](clean_data.py), and finds the best parameters for classification.
@@ -161,10 +166,12 @@ Select features to use by setting the variable `features` equal to a list of fea
 
 At command line, type `python gridsearch.py [name of output file without file extension]`.
 
+
 ### [plot_gridsearch.py](plot_gridsearch.py)
 Plot a histogram of areas under receiver operating characteristic (AUROC) curve, as well as mean AUROC vs. each parameter.
 
 At command line, enter `python plot_gridsearch.py`
+
 
 ### [ROC_classification_report.py](ROC_classification_report.py)
 
@@ -176,6 +183,7 @@ Also outputs a classification report, containing precision and recall statistics
 One must first modify `file_list` and `label_list`. `file_list` should contain a list of files to use. These should all be outputs of [gridsearch.py](gridsearch.py). `label_list` should contain human-readable labels describing what results are in each file, for example "Age only".
 
 Once `file_list` and `label_list` are completed, run this program at command line by entering `python ROC_classification_report.py`
+
 
 ### [GRACE_calculator.py](GRACE_calculator.py)
 This script calculates the GRACE score for items in the cleaned ACS-1 database. The GRACE score is calculated from various characteristics as detailed in [Figure 4](http://jamanetwork.com/data/Journals/INTEMED/5461/ioi21057f4.png) of the article [*Predictors of Hospital Mortality in the Global Registry of Acute Coronary Events*](http://jamanetwork.com/journals/jamainternalmedicine/fullarticle/216232).
@@ -199,13 +207,21 @@ Ensure that the `.pickle` file from [clean_data.py](clean_data.py) is available.
 
 Once done, run this file at command line using `python GRACE_calculator.py`. 
 
+
+### [hyperplane.py](hyperplane.py)
+This script uses a 3-feature machine learning model to generate a three-dimensional plot of classifications.
+
+The density of dots can be adjusted by modifying the last argument of the [range](https://docs.python.org/2/library/functions.html#range) functions in the script. The lower the number, the higher the density of points along that axis.
+
+The script can be run at command line using `python hyperplane.py`.
+
+
 ### [external_validation.py](external_validation.py)
 This script applies the machine learning model in [ml_classifier.pickle](ml_classifier.pickle) to a new dataset.
 
 It takes in two files, a CSV of the dataset, as well as the pickled machine learning classifier. The script the returns receiver operating characteristic (ROC) curves for both the machine learning model and the GRACE score. 
 
 In order to calculate confidence intervals for the areas under the ROCs, it bootstraps using 10000 random variables.
-
 
 #### Usage
 See above, [within the quick start guide](#tailoring-the-validation-script-to-the-dataset).
