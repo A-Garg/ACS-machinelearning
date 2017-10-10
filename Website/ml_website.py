@@ -1,3 +1,4 @@
+#!/usr/bin/python
 from __future__ import print_function
 """
 Created on 2017-09-03
@@ -27,7 +28,7 @@ print("""Content-Type: html
 
 <html>
 <head>
-    <title>ACS Mortality Calculator</title>
+    <title>ACS Mortality Predictor</title>
 
     <!-- This container keeps the forms lined up -->
     <style type="text/css">
@@ -43,7 +44,7 @@ print("""Content-Type: html
 </head>
 
 <body>
-<h2>ACS mortality calculator</h2>
+<h2>ACS mortality predictor</h2>
 <p>Below, enter age (years), peak creatinine level (micromol/L), and left ventricle ejection fraction (%).</p>
 """)
 
@@ -54,48 +55,56 @@ age       = form.getvalue("age")
 peakcreat = form.getvalue("peakcreat")
 lvef      = form.getvalue("lvef")
 
-# Get form data
-print("""
-<div class="container">
 
-    <form action="/ml_website.py" method="get">
-    
-    <!-- Default values are those that were previously entered -->
-    Age:             <input type="number" name="age" value="{}"><br>
-    Peak creatinine: <input type="number" name="peakcreat" value="{}"<br><br>
-    LVEF:            <input type="number" name="lvef" value="{}" />
+try:
+    # Get form data
+    print("""
+    <div class="container">
 
-    <input type="submit" value="Submit" />
-    </form>
-</div>
-""".format(age, peakcreat, lvef))
+        <form action="/ml_website.py" method="get">
+        
+        <!-- Default values are those that were previously entered -->
+        Age:             <input type="number" name="age" value="{}"><br>
+        Peak creatinine: <input type="number" name="peakcreat" value="{}"<br><br>
+        LVEF:            <input type="number" name="lvef" value="{}" />
 
-# Print data that was collected
-print("""
-Machine learning prediction based on:<br>
-Age: {}<br>
-Peak creatinine: {} micromol/L<br>
-LVEF: {}%
-""".format(age, peakcreat, lvef))
+        <input type="submit" value="Submit" />
+        </form>
+    </div>
+    """.format(age, peakcreat, lvef))
 
-# Machine learning: standardize inputs
-features = standardizer.transform([[age, peakcreat, lvef]])
+    # Print data that was collected
+    print("""
+    Machine learning prediction based on:<br>
+    Age: {}<br>
+    Peak creatinine: {} micromol/L<br>
+    LVEF: {}%
+    """.format(age, peakcreat, lvef))
 
-# Machine learning: make prediction and calculate probability
-prediction = classifier.predict(features)
-probability_array    = classifier.predict_proba(features)[0]
-survival_probability = float(max(probability_array))
+    # Machine learning: standardize inputs
+    features = standardizer.transform([[age, peakcreat, lvef]])
 
-# Convert 0/1 label to survival/death
-if prediction[0] == 0:
-    prediction_text = "survival"
-else: prediction_text = "death"
+    # Machine learning: make prediction and calculate probability
+    prediction = classifier.predict(features)
+    probability_array    = classifier.predict_proba(features)[0]
+    survival_probability = float(max(probability_array))
 
-# End of HTML
-print("""
-<p>In-hospital mortality prediction: <b>{}</b><br>
-Certainty of prediction (between 50% and 100%, closer to 100% is better): {:.1f}%</p>
-""".format(prediction_text, survival_probability*100))
+    # Convert 0/1 label to survival/death
+    if prediction[0] == 0:
+        prediction_text = "survival"
+    else: prediction_text = "death"
+
+    # End of HTML
+    print("""
+    <p>In-hospital mortality prediction: <b>{}</b><br>
+    Certainty of prediction (between 50% and 100%, closer to 100% is better): {:.1f}%</p>
+    """.format(prediction_text, survival_probability*100))
+
+# If there's a ValueError, all of the data was not entered.
+# When the user presses the submit button with the values entered,
+    # the script will reload and run through the try block instead.
+except ValueError: pass
+
 print("""
 <p><a href="https://github.com/A-Garg/ACS-machinelearning">Source code</a></p>
 </body></html>""")
